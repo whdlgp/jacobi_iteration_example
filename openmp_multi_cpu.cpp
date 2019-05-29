@@ -35,7 +35,9 @@ int main(int argc, char** argv)
         // For convinience, padding A matrix
         MAT A_padded = padding_matrix(A, row_num, col_num, 0);
 
-        #pragma omp parallel num_threads(4) 
+        // Number of thread
+        #pragma omp parallel num_threads(4)
+        // 2 Nested for loop, local sum 'diffnorm' and reduction with operator '+' 
         #pragma omp parallel for collapse(2) reduction(+:diffnorm)
         for(int i = 0; i < MAT_ROWS; i++)
         {
