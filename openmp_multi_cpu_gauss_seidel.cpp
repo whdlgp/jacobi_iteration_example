@@ -22,8 +22,9 @@ int main(int argc, char** argv)
     int row_num, col_num;
     get_shape_matrix(A, row_num, col_num);
 
-    // Prepare output matrix
-    MAT B(A);
+
+    // For convinience, padding A matrix
+    MAT A_padded = padding_matrix(A, row_num, col_num, 0);
 
     bool converge = false;
     int iteration_num = 0;
@@ -32,37 +33,39 @@ int main(int argc, char** argv)
         iteration_num++;
         double diffnorm = 0.0;
 
-        // For convinience, padding A matrix
-        MAT A_padded = padding_matrix(A, row_num, col_num, 0);
-
         // Number of thread
         #pragma omp parallel num_threads(4)
         // 2 Nested for loop, local sum 'diffnorm' and reduction with operator '+' 
-        #pragma omp parallel for collapse(2) reduction(+:diffnorm)
-        for(int i = 0; i < MAT_ROWS; i++)
+        #pragma omp parallel for collapse(2) reduction(+:diffnorm) ordered
+        for(int i = 0; i < row_num; i++)
         {
-            for(int j = 0; j < MAT_COLS; j++)
+            for(int j = 0; j < col_num; j++)
             {
                 // because we do padding, index changed
                 int idx_i_A = i+1;
                 int idx_j_A = j+1;
 
-                // Do jacobi
-                B[i][j] = 0.25*(A_padded[idx_i_A+1][idx_j_A]
-                              + A_padded[idx_i_A-1][idx_j_A]
-                              + A_padded[idx_i_A][idx_j_A+1]
-                              + A_padded[idx_i_A][idx_j_A-1]);
+                double pre_val, current_val;
+
+                // Do Gauss-Seidel
+                pre_val = A_padded[idx_i_A][idx_j_A];
+                A_padded[idx_i_A][idx_j_A] = 0.25*(A_padded[idx_i_A+1][idx_j_A]
+                                                + A_padded[idx_i_A-1][idx_j_A]
+                                                + A_padded[idx_i_A][idx_j_A+1]
+                                                + A_padded[idx_i_A][idx_j_A-1]);
+                current_val = A_padded[idx_i_A][idx_j_A];
 
                 // simple converge test
-                diffnorm += sqrt((B[i][j] - A[i][j])*(B[i][j] - A[i][j]));
+                diffnorm += sqrt((pre_val - current_val)*(pre_val - current_val));
             }
         }
-        copy_matrix(B, A);
 
         if(diffnorm <= 0.0001)
         {
             DEBUG_PRINT_OUT("Converge, iteration : " << iteration_num);
             DEBUG_PRINT_OUT("Error : " << diffnorm);
+
+            A = remove_border_matrix(A_padded, row_num+2, col_num+2);
             converge = true;
         }
     }

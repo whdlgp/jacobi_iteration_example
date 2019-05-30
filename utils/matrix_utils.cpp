@@ -51,6 +51,28 @@ MAT padding_matrix(MAT& origin_mat, int rows, int cols, double pad_val)
     return padded;
 }
 
+// Remove border of Matrix, impemented with std::vector
+// origin_mat: origin_mat matrix to pad
+// rows, cols: original size
+MAT remove_border_matrix(MAT& origin_mat, int rows, int cols)
+{
+    // Result size become small
+    MAT tmp = create_matrix(rows-2, cols-2, 0.0);
+
+    for(int i = 0; i < rows-2; i++)
+    {
+        for(int j = 0; j < cols-2; j++)
+        {
+            int origin_i = i + 1;
+            int origin_j = j + 1;
+
+            tmp[i][j] = origin_mat[origin_i][origin_j];
+        }
+    }
+
+    return tmp;
+}
+
 // Print out Matrix implemented with std::vector
 void print_matrix(MAT& mat)
 {
