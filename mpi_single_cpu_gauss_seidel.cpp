@@ -71,5 +71,5 @@ int main(int argc, char** argv)
 
     ofstream outfile;
     outfile.open("log.txt", std::ios_base::app);
-    outfile << "gauss_seidel," << 1 << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
+    outfile << "single," << "gauss_seidel," << 1 << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
 }

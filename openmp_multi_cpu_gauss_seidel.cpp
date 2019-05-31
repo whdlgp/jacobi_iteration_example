@@ -1,8 +1,7 @@
 #include "utils/matrix_utils.h"
 #include "common_setup.h"
 #include <fstream>
-
-#define THREAD_NUM 4
+#include <omp.h>
 
 using namespace std;
 
@@ -25,15 +24,15 @@ int main(int argc, char** argv)
 
     bool converge = false;
     int iteration_num = 0;
+    //THREAD_NUM
+    omp_set_num_threads(OMP_THREAD_NUM);
     while(converge == false)
     {
         iteration_num++;
         double diffnorm = 0.0;
 
-        // Number of thread
-        #pragma omp parallel num_threads(THREAD_NUM)
         // 2 Nested for loop, local sum 'diffnorm' and reduction with operator '+' 
-        #pragma omp parallel for collapse(2) reduction(+:diffnorm) ordered
+        #pragma omp parallel for reduction(+:diffnorm)
         for(int i = 0; i < row_num; i++)
         {
             for(int j = 0; j < col_num; j++)
@@ -77,5 +76,5 @@ int main(int argc, char** argv)
 
     ofstream outfile;
     outfile.open("log.txt", std::ios_base::app);
-    outfile << "gauss_seidel," << THREAD_NUM << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
+    outfile << "openmp," << "gauss_seidel," << OMP_THREAD_NUM << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
 }

@@ -67,5 +67,5 @@ int main(int argc, char** argv)
 
     ofstream outfile;
     outfile.open("log.txt", std::ios_base::app);
-    outfile << "jacobi," << 1 << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
+    outfile << "single," << "jacobi," << 1 << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
 }

@@ -150,6 +150,6 @@ int main(int argc, char** argv)
     {
         ofstream outfile;
         outfile.open("log.txt", std::ios_base::app);
-        outfile << "jacobi," << world_size << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
+        outfile << "MPI," << "jacobi," << world_size << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
     }
 }
