@@ -1,13 +1,7 @@
 #include "utils/matrix_utils.h"
+#include "common_setup.h"
 
 using namespace std;
-
-enum
-{
-    MAT_SIZE = 8,
-    MAT_ROWS = MAT_SIZE,
-    MAT_COLS = MAT_SIZE,
-};
 
 int main(int argc, char** argv) 
 {
