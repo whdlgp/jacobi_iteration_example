@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include "utils/matrix_utils.h"
 #include "common_setup.h"
+#include <fstream>
 
 using namespace std;
 
@@ -127,11 +128,14 @@ int main(int argc, char** argv)
 
     double* A_tmp = new double[row_num*col_num];
     MPI_Gather(A_local_tmp, local_row_num*col_num, MPI_DOUBLE, A_tmp, local_row_num*col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    if(world_rank == 0)
+    
+    if(PRINT_MAT)
     {
-        MAT A_result = pointer2matrix(A_tmp, row_num, col_num);
-        print_matrix(A_result);
+        if(world_rank == 0)
+        {
+            MAT A_result = pointer2matrix(A_tmp, row_num, col_num);
+            print_matrix(A_result);
+        }
     }
     
     // Finalize the MPI environment.
@@ -141,4 +145,11 @@ int main(int argc, char** argv)
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
     DEBUG_PRINT_OUT("Process : " << world_rank << ", execution time : " << duration.count() << " us");
+
+    if(world_rank == 0)
+    {
+        ofstream outfile;
+        outfile.open("log.txt", std::ios_base::app);
+        outfile << "jacobi," << world_size << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
+    }
 }

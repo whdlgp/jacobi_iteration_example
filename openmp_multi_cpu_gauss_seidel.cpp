@@ -1,5 +1,8 @@
 #include "utils/matrix_utils.h"
 #include "common_setup.h"
+#include <fstream>
+
+#define THREAD_NUM 4
 
 using namespace std;
 
@@ -28,7 +31,7 @@ int main(int argc, char** argv)
         double diffnorm = 0.0;
 
         // Number of thread
-        #pragma omp parallel num_threads(4)
+        #pragma omp parallel num_threads(THREAD_NUM)
         // 2 Nested for loop, local sum 'diffnorm' and reduction with operator '+' 
         #pragma omp parallel for collapse(2) reduction(+:diffnorm) ordered
         for(int i = 0; i < row_num; i++)
@@ -64,10 +67,15 @@ int main(int argc, char** argv)
         }
     }
 
-    print_matrix(A);
+    if(PRINT_MAT)
+        print_matrix(A);
 
     // stop process execution time measure
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
     DEBUG_PRINT_OUT("Execution time : " << duration.count() << " us");
+
+    ofstream outfile;
+    outfile.open("log.txt", std::ios_base::app);
+    outfile << "gauss_seidel," << THREAD_NUM << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
 }

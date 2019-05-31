@@ -1,5 +1,6 @@
 #include "utils/matrix_utils.h"
 #include "common_setup.h"
+#include <fstream>
 
 using namespace std;
 
@@ -55,11 +56,16 @@ int main(int argc, char** argv)
             converge = true;
         }
     }
-
-    print_matrix(A);
+    
+    if(PRINT_MAT)
+        print_matrix(A);
 
     // stop process execution time measure
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
     DEBUG_PRINT_OUT("Execution time : " << duration.count() << " us");
+
+    ofstream outfile;
+    outfile.open("log.txt", std::ios_base::app);
+    outfile << "jacobi," << 1 << ',' << MAT_SIZE << ',' << converge << ',' << iteration_num << ',' << duration.count() << endl; 
 }
