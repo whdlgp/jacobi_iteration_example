@@ -1,12 +1,16 @@
 #pragma once
 
+#ifndef MAT_SIZE
+#define MAT_SIZE 40
+#endif
 enum
 {
-    MAT_SIZE = 80,
     MAT_ROWS = MAT_SIZE,
     MAT_COLS = MAT_SIZE,
 };
 
 #define PRINT_MAT false
 
-#define OMP_THREAD_NUM 4
+#ifndef OMP_THREAD_NUM
+#define OMP_THREAD_NUM 2
+#endif

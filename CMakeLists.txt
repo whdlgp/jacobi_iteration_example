@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 project( mpi_helloworld_test )
 
+set( MAT_SIZE )
+set( OMP_THREAD_NUM )
+add_definitions( ${MAT_SIZE} ${OMP_THREAD_NUM} )
+
 set( SRCS )
 aux_source_directory( "./utils" SRCS)
 
